@@ -1,0 +1,26 @@
+<?php
+/**
+ * @file
+ * Interface module for talking with the materials backend.
+ */
+
+/**
+ * Implementation of preprocess_page_hook().
+ */
+function ding_export_to_ris_preprocess_page(&$variables) {
+  // Array of ding icon replacement paths
+  $paths = array(
+    'user',
+  );
+
+  $path = current_path();
+  $module_path = drupal_get_path('module', 'ding_export_to_ris');
+
+  foreach ($paths as $value) {
+    if (strpos($path, $value) === 0) {
+      drupal_add_js(drupal_get_path('module', 'ding_popup') . '/ding_popup.js');
+      drupal_add_js($module_path .'/js/ding_export_to_ris.js', array('scope' => 'footer', 'weight' => 99));
+      break;
+    }
+  }
+}
