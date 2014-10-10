@@ -11,11 +11,11 @@
     var ids = [];
 
     $('.pane-bookmarks :checkbox:not(".wrap_selector-processed")').each(function() {
-      var $ckeckbox = $(this);
+      var $checkbox = $(this);
 
-      if ($ckeckbox.attr('checked') === true) {
+      if ($checkbox.attr('checked') === true) {
         // Get proper id from checked item.
-        var id = $ckeckbox.closest('tr').find('.group_user_list_content:first')
+        var id = $checkbox.closest('tr').find('.group_user_list_content:first')
                 .attr('id')
                 .replace(/[A-Za-z$_]/g, '').replace(/-/g, '-basis:');
 
