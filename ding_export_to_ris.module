@@ -5,22 +5,46 @@
  */
 
 /**
- * Implementation of preprocess_page_hook().
+ * Implementation of block_info_hook().
  */
-function ding_export_to_ris_preprocess_page(&$variables) {
-  // Array of ding icon replacement paths
-  $paths = array(
-    'user',
+
+function ding_export_to_ris_block_info() {
+  $blocks['export_to_ris'] = array(
+    'info' => t('Export to ris'),
   );
 
-  $path = current_path();
-  $module_path = drupal_get_path('module', 'ding_export_to_ris');
+  return $blocks;
+}
 
-  foreach ($paths as $value) {
-    if (strpos($path, $value) === 0) {
+/**
+ * Implementation of block_view_hook().
+ */
+
+function ding_export_to_ris_block_view($delta = '') {
+  global $user;
+  $query = db_select('flag_content', 'fc');
+  $query->leftJoin('ting_object', 'o', 'fc.content_id=o.tid');
+  $ding_id = $query->fields('o', array('ding_entity_id'))
+    ->condition('fc.uid', $user->uid)
+    ->execute()
+    ->fetchCol('ding_entity_id');
+
+  $block = array();
+
+  switch ($delta) {
+    case 'export_to_ris':
+      $module_path = drupal_get_path('module', 'ding_export_to_ris');
+      // Export bookmarts settings to Drupal js settings.
+      drupal_add_js(array('exportToRisBookmarks' => $ding_id), 'setting');
+      // Enabling ding popup for error messaging.
       drupal_add_js(drupal_get_path('module', 'ding_popup') . '/ding_popup.js');
       drupal_add_js($module_path .'/js/ding_export_to_ris.js', array('scope' => 'footer', 'weight' => 99));
+
+      // Block markup.
+      $block['subject'] = t('Export to tis');
+      $block['content'] = '<a href="#" class="export-to-ris">Export to ris</a>';
+
       break;
-    }
   }
+  return $block;
 }

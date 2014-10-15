@@ -1,14 +1,16 @@
 (function($) {
   'use strict';
-
   /**
    * Export to ris functionality
    *
    * @param  event e clicked button event.
    */
   function findIdsToExport(e) {
-    // Clear id's.
-    var ids = [];
+    var allIds = Drupal.settings.exportToRisBookmarks;
+    // Clear selected id's.
+    var selectedIds = [];
+    // Final bookmars collection for export.
+    var collectedIds = [];
 
     $('.pane-bookmarks :checkbox:not(".wrap_selector-processed")').each(function() {
       var $checkbox = $(this);
@@ -16,18 +18,31 @@
       if ($checkbox.attr('checked') === true) {
         // Get proper id from checked item.
         var id = $checkbox.closest('tr').find('.group_user_list_content:first')
-                .attr('id')
-                .replace(/[A-Za-z$_]/g, '').replace(/-/g, '-basis:');
+                .attr('id').replace(/(\d+)/, '')
+                .replace(/(\D+)/g, '');
 
         // Push current id to id's list.
-        ids.push(id);
+        selectedIds.push(id);
       }
     });
 
-    // If id's available.
-    if (ids.length !== 0) {
-      ids = ids.join(';');
-      $('.export-to-ris').attr('href', 'http://bibliotek.dk/da/export/cart/ris/' + ids).removeClass('hidden');
+    // Check if selected items exist in bookmarks array
+    for (var i = selectedIds.length - 1; i >= 0; i--) {
+      var selectedId = selectedIds[i];
+
+      for (var j = allIds.length - 1; j >= 0; j--) {
+        var bookmarksId = allIds[j];
+
+        if (bookmarksId.indexOf(selectedId) >= 0) {
+          collectedIds.push(bookmarksId);
+        }
+      }
+    }
+
+    // If collected id's available.
+    if (collectedIds.length !== 0) {
+      collectedIds = collectedIds.join(';');
+      $('.export-to-ris').attr('href', 'http://bibliotek.dk/da/export/cart/ris/' + collectedIds).removeClass('hidden');
     }
     else {
       e.preventDefault();
@@ -42,13 +57,6 @@
 
   // On document ready.
   $(function() {
-    // Export to ris button.
-    $('<a>', {
-      'href': '#',
-      'class': 'export-to-ris',
-      'target': '_blank',
-      'text': Drupal.t('Export to RIS-format')
-    }).insertBefore('.pane-bookmarks .d-reservations-delete');
 
     // Export to ris functionality.
     $('.export-to-ris').live('click', function(e) {
