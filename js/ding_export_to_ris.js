@@ -1,12 +1,12 @@
 (function($) {
   'use strict';
+
   /**
    * Export to ris functionality
-   *
-   * @param  event e clicked button event.
    */
-  function findIdsToExport(e) {
+  function findIdsToExport() {
     var allIds = Drupal.settings.exportToRisBookmarks;
+    var buttonUrl = Drupal.settings.exportToRisUrl;
     // Clear selected id's.
     var selectedIds = [];
     // Final bookmars collection for export.
@@ -17,16 +17,11 @@
 
       if ($checkbox.attr('checked') === true) {
         // Get proper id from checked item.
-        var id = $checkbox.closest('tr').find('.group_user_list_content:first')
-                .attr('id').replace(/(\d+)/, '')
-                .replace(/(\D+)/g, '');
-
-        // Push current id to id's list.
-        selectedIds.push(id);
+        selectedIds.push($checkbox.closest('tr').find('.group_user_list_content:first').attr('id').match(/(\d+$)/)[0]);
       }
     });
 
-    // Check if selected items exist in bookmarks array
+    // Check if selected items exist in bookmarks array.
     for (var i = selectedIds.length - 1; i >= 0; i--) {
       var selectedId = selectedIds[i];
 
@@ -42,10 +37,9 @@
     // If collected id's available.
     if (collectedIds.length !== 0) {
       collectedIds = collectedIds.join(';');
-      $('.export-to-ris').attr('href', 'http://bibliotek.dk/da/export/cart/ris/' + collectedIds).removeClass('hidden');
+      window.location.href = Drupal.settings.exportToRisUrl + collectedIds;
     }
     else {
-      e.preventDefault();
 
       // Open error popup.
       Drupal.ding_popup.open({
@@ -60,7 +54,8 @@
 
     // Export to ris functionality.
     $('.export-to-ris').live('click', function(e) {
-      findIdsToExport(e);
+      e.preventDefault();
+      findIdsToExport();
     });
   });
 })(jQuery);
