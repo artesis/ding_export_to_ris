@@ -4,23 +4,59 @@
  * Interface module for talking with the materials backend.
  */
 
+define('BUTTON_URL', 'http://bibliotek.dk/da/export/cart/ris/');
+
 /**
- * Implementation of preprocess_page_hook().
+ * Implements hook_block_info().
  */
-function ding_export_to_ris_preprocess_page(&$variables) {
-  // Array of ding icon replacement paths
-  $paths = array(
-    'user',
+
+function ding_export_to_ris_block_info() {
+  $blocks['export_to_ris'] = array(
+    'info' => t('Export to ris'),
   );
 
-  $path = current_path();
-  $module_path = drupal_get_path('module', 'ding_export_to_ris');
+  return $blocks;
+}
 
-  foreach ($paths as $value) {
-    if (strpos($path, $value) === 0) {
+/**
+ * Implements hook_block_view().
+ */
+
+function ding_export_to_ris_block_view($delta = '') {
+
+  $block = array();
+
+  switch ($delta) {
+    case 'export_to_ris':
+      global $user;
+
+      $query = db_select('flag_content', 'fc');
+      $query->leftJoin('ting_object', 'o', 'fc.content_id=o.tid');
+      $ding_id = $query->fields('o', array('ding_entity_id'))
+        ->condition('fc.uid', $user->uid)
+        ->execute()
+        ->fetchCol('ding_entity_id');
+
+      $module_path = drupal_get_path('module', 'ding_export_to_ris');
+      // Export bookmarts settings to Drupal js settings.
+      drupal_add_js(array('exportToRisBookmarks' => $ding_id), 'setting');
+      drupal_add_js(array('exportToRisUrl' => BUTTON_URL), 'setting');
+      // Enabling ding popup for error messaging.
       drupal_add_js(drupal_get_path('module', 'ding_popup') . '/ding_popup.js');
       drupal_add_js($module_path .'/js/ding_export_to_ris.js', array('scope' => 'footer', 'weight' => 99));
+
+      // Block markup.
+      $block['subject'] = t('Export to ris');
+      $block['content'] = l(
+        t('Export to ris'), '#',
+        array('attributes' =>
+          array(
+          'class' => array('export-to-ris')
+          )
+        )
+      );
+
       break;
-    }
   }
+  return $block;
 }
