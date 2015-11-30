@@ -74,7 +74,7 @@ function ding_export_to_ris_ding_entity_buttons($type, $entity, $widget = 'defau
       '#theme' => 'link',
       '#text' => '<i class="icon-white icon-download-alt"></i>',
       '#path' => '#',
-      '#weight' => 100,
+      '#weight' => 104,
       '#options' => array(
         'attributes' => array(
           'class' => array(
