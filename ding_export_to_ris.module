@@ -43,16 +43,20 @@ function ding_export_to_ris_block_view($delta = '') {
       drupal_add_js(array('exportToRisUrl' => BUTTON_URL), 'setting');
       // Enabling ding popup for error messaging.
       drupal_add_js(drupal_get_path('module', 'ding_popup') . '/ding_popup.js');
-      drupal_add_js($module_path .'/js/ding_export_to_ris.js', array('scope' => 'footer', 'weight' => 99));
+      drupal_add_js($module_path . '/js/ding_export_to_ris.js', array(
+        'scope' => 'footer',
+        'weight' => 99
+      ));
 
       // Block markup.
       $block['subject'] = t('Export to ris');
       $block['content'] = l(
         t('Export to ris'), '#',
-        array('attributes' =>
-          array(
-          'class' => array('export-to-ris')
-          )
+        array(
+          'attributes' =>
+            array(
+              'class' => array('export-to-ris')
+            )
         )
       );
 
@@ -60,3 +64,45 @@ function ding_export_to_ris_block_view($delta = '') {
   }
   return $block;
 }
+
+/**
+ * Implements hook_ding_entity_buttons().
+ */
+function ding_export_to_ris_ding_entity_buttons($type, $entity, $widget = 'default') {
+  return array(
+    array(
+      '#theme' => 'link',
+      '#text' => '<i class="icon-white icon-download-alt"></i>',
+      '#path' => '#',
+      '#weight' => 104,
+      '#options' => array(
+        'attributes' => array(
+          'class' => array(
+            'btn',
+            'btn-artesis-turquoise',
+            'export-to-ris-btn',
+          ),
+          'data-tid' => $entity->ding_entity_id,
+          'title' => t('Export in RIS-format'),
+        ),
+        'html' => TRUE,
+        'absolute' => TRUE,
+      ),
+      '#attached' => array(
+        'js' => array(
+          array(
+            'data' => drupal_get_path('module', 'ding_export_to_ris') . '/js/ding_export_to_ris.js',
+            'type' => 'file',
+          ),
+          array(
+            'data' => array(
+              'exportToRisUrl' => BUTTON_URL
+            ),
+            'type' => 'setting',
+          ),
+        ),
+      ),
+    )
+  );
+}
+

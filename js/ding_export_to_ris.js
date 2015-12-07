@@ -14,10 +14,10 @@
 
     $('.pane-bookmarks :checkbox:not(".wrap_selector-processed")').each(function() {
       var $checkbox = $(this);
-
       if ($checkbox.attr('checked') === true) {
         // Get proper id from checked item.
-        selectedIds.push($checkbox.closest('tr').find('.group_user_list_content:first').attr('id').match(/(\d+$)/)[0]);
+        var parts = $checkbox.closest('tr').find('.group_user_list_content:first').attr('id').split('-');
+        selectedIds.push(parts[parts.length - 1]);
       }
     });
 
@@ -56,6 +56,15 @@
     $('.export-to-ris').live('click', function(e) {
       e.preventDefault();
       findIdsToExport();
+    });
+
+    // Export to ris functionality.
+    $('.export-to-ris-btn').live('click', function(e) {
+      e.preventDefault();
+      var tid = $(this).data('tid');
+
+      if (tid.length != 0)
+        window.location.href = Drupal.settings.exportToRisUrl + tid;
     });
   });
 })(jQuery);
