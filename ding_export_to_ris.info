@@ -1,5 +1,5 @@
-name = Ding export to ris
-description = Ding export to ris format selected items
+name = Ding export in RIS-format
+description = Ding export in RIS-format selected items
 package = Ding!
 version = "7.x-2.4"
 core = 7.x

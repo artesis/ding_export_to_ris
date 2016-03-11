@@ -12,7 +12,7 @@ define('BUTTON_URL', 'http://bibliotek.dk/da/export/cart/ris/');
 
 function ding_export_to_ris_block_info() {
   $blocks['export_to_ris'] = array(
-    'info' => t('Export to ris'),
+    'info' => t('Export in RIS-format'),
   );
 
   return $blocks;
@@ -49,9 +49,9 @@ function ding_export_to_ris_block_view($delta = '') {
       ));
 
       // Block markup.
-      $block['subject'] = t('Export to ris');
+      $block['subject'] = t('Export in RIS-format');
       $block['content'] = l(
-        t('Export to ris'), '#',
+        t('Export in RIS-format'), '#',
         array(
           'attributes' =>
             array(
