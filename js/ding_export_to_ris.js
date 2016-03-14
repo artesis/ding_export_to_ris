@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * Export to ris functionality
+   * Export in RIS-format functionality
    */
   function findIdsToExport() {
     var allIds = Drupal.settings.exportToRisBookmarks;
@@ -52,13 +52,13 @@
   // On document ready.
   $(function() {
 
-    // Export to ris functionality.
+    // Export in RIS-format functionality.
     $('.export-to-ris').live('click', function(e) {
       e.preventDefault();
       findIdsToExport();
     });
 
-    // Export to ris functionality.
+    // Export in RIS-format functionality.
     $('.export-to-ris-btn').live('click', function(e) {
       e.preventDefault();
       var tid = $(this).data('tid');
