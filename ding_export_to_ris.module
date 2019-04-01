@@ -28,24 +28,14 @@ function ding_export_to_ris_block_view($delta = '') {
 
   switch ($delta) {
     case 'export_to_ris':
-      global $user;
-
-      $query = db_select('flag_content', 'fc');
-      $query->leftJoin('ting_object', 'o', 'fc.content_id=o.tid');
-      $ding_id = $query->fields('o', array('ding_entity_id'))
-        ->condition('fc.uid', $user->uid)
-        ->execute()
-        ->fetchCol('ding_entity_id');
-
       $module_path = drupal_get_path('module', 'ding_export_to_ris');
       // Export bookmarts settings to Drupal js settings.
-      drupal_add_js(array('exportToRisBookmarks' => $ding_id), 'setting');
       drupal_add_js(array('exportToRisUrl' => BUTTON_URL), 'setting');
       // Enabling ding popup for error messaging.
       drupal_add_js(drupal_get_path('module', 'ding_popup') . '/ding_popup.js');
       drupal_add_js($module_path . '/js/ding_export_to_ris.js', array(
         'scope' => 'footer',
-        'weight' => 99
+        'weight' => 99,
       ));
 
       // Block markup.
@@ -69,6 +59,11 @@ function ding_export_to_ris_block_view($delta = '') {
  * Implements hook_ding_entity_buttons().
  */
 function ding_export_to_ris_ding_entity_buttons($type, $entity, $widget = 'default') {
+  $id = $entity->ding_entity_id;
+  if (!empty($entity->data)) {
+    $object = $entity->data;
+    $id = $object->getObjectId();
+  }
   return array(
     array(
       '#theme' => 'link',
@@ -82,7 +77,7 @@ function ding_export_to_ris_ding_entity_buttons($type, $entity, $widget = 'defau
             'btn-artesis-turquoise',
             'export-to-ris-btn',
           ),
-          'data-tid' => $entity->ding_entity_id,
+          'data-tid' => $id,
           'title' => t('Export in RIS-format'),
         ),
         'html' => TRUE,
@@ -105,4 +100,3 @@ function ding_export_to_ris_ding_entity_buttons($type, $entity, $widget = 'defau
     )
   );
 }
-
