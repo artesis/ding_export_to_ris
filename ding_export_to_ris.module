@@ -4,7 +4,7 @@
  * Interface module for talking with the materials backend.
  */
 
-define('BUTTON_URL', 'http://bibliotek.dk/da/export/cart/ris/');
+define('BUTTON_URL', 'https://bibliotek.dk/da/export/cart/ris/');
 
 /**
  * Implements hook_block_info().
